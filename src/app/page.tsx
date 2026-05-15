@@ -1,5 +1,28 @@
 import { prisma } from "@/lib/prisma";
 import PortfolioShell from "./components/PortfolioShell";
+import { Suspense } from "react";
+
+function PortfolioContent({
+  profile,
+  skills,
+  experience,
+  projects,
+  writings,
+  hacks,
+  setups,
+}: any) {
+  return (
+    <PortfolioShell
+      profile={profile}
+      skills={skills}
+      experience={experience}
+      projects={projects}
+      writings={writings}
+      hacks={hacks}
+      setups={setups}
+    />
+  );
+}
 
 export default async function Home() {
   const [profile, skills, experience, projects] = await Promise.all([
@@ -90,39 +113,41 @@ export default async function Home() {
   };
 
   return (
-    <PortfolioShell
-      profile={{
-        name: profile.name,
-        title: profile.title,
-        bio: profile.bio,
-        email: profile.email,
-        phone: profile.phone,
-        github: profile.github,
-        linkedin: profile.linkedin,
-      }}
-      skills={skills.map((skill) => ({
-        id: skill.id,
-        category: skill.category,
-        name: skill.name,
-      }))}
-      experience={experience.map((item) => ({
-        id: item.id,
-        role: item.role,
-        company: item.company,
-        duration: item.duration,
-        description: item.description,
-      }))}
-      projects={projects.map((project) => ({
-        id: project.id,
-        title: project.title,
-        description: project.description,
-        techStack: project.techStack,
-        repoUrl: project.repoUrl,
-        liveUrl: project.liveUrl,
-      }))}
-      writings={writings}
-      hacks={hacks}
-      setups={setups}
-    />
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-[#f3f2ee]"><p>Loading...</p></div>}>
+      <PortfolioContent
+        profile={{
+          name: profile.name,
+          title: profile.title,
+          bio: profile.bio,
+          email: profile.email,
+          phone: profile.phone,
+          github: profile.github,
+          linkedin: profile.linkedin,
+        }}
+        skills={skills.map((skill) => ({
+          id: skill.id,
+          category: skill.category,
+          name: skill.name,
+        }))}
+        experience={experience.map((item) => ({
+          id: item.id,
+          role: item.role,
+          company: item.company,
+          duration: item.duration,
+          description: item.description,
+        }))}
+        projects={projects.map((project) => ({
+          id: project.id,
+          title: project.title,
+          description: project.description,
+          techStack: project.techStack,
+          repoUrl: project.repoUrl,
+          liveUrl: project.liveUrl,
+        }))}
+        writings={writings}
+        hacks={hacks}
+        setups={setups}
+      />
+    </Suspense>
   );
 }
